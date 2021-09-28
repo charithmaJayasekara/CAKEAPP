@@ -35,7 +35,7 @@ public class ManageEmployeee extends AppCompatActivity {
     //declare variables
     Button button;
     ListView listView;
-    List<EmployeeDetails> user;
+    List<EmployeeDetails> user; //create a list
     DatabaseReference ref; //firebase access class reference
 
     @Override
@@ -53,7 +53,7 @@ public class ManageEmployeee extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+//retrieve data
         user = new ArrayList<>();
 
         ref = FirebaseDatabase.getInstance().getReference("EmployeeDetails"); //create path to EmployeeDetails table
@@ -64,13 +64,13 @@ public class ManageEmployeee extends AppCompatActivity {
                 user.clear();
 
                 for (DataSnapshot studentDatasnap : dataSnapshot.getChildren()) {
-
+                    //passing data from the EmployeeDetails class and add to user
                     EmployeeDetails employeeDetails = studentDatasnap.getValue(EmployeeDetails.class);
                     user.add(employeeDetails);
                 }
 
                 MyAdapter adapter = new MyAdapter(ManageEmployeee.this, R.layout.custom_employee_details, (ArrayList<EmployeeDetails>) user);
-                listView.setAdapter(adapter);
+                listView.setAdapter(adapter);//setting data to the list view
 
             }
 
@@ -90,14 +90,14 @@ public class ManageEmployeee extends AppCompatActivity {
         Button button1;
         Button button2;
     }
-
+//getting details from EmployeeDetails class
     class MyAdapter extends ArrayAdapter<EmployeeDetails> {
-        LayoutInflater inflater;
+        LayoutInflater inflater; //setting custom a layout
         Context myContext;
         List<EmployeeDetails> user;
 
 
-        public MyAdapter(Context context, int resource, ArrayList<EmployeeDetails> objects) {
+        public MyAdapter(Context context, int resource, ArrayList<EmployeeDetails> objects) { //calling the my adapter class constructor
             super(context, resource, objects);
             myContext = context;
             user = objects;
@@ -110,10 +110,10 @@ public class ManageEmployeee extends AppCompatActivity {
         @Override
         public View getView(int position, View view, ViewGroup parent) { //get view and set different layouts
             final ViewHolder holder;
-            if (view == null) {
+            if (view == null) { //check whether the view is null
                 holder = new ViewHolder();
                 view = inflater.inflate(R.layout.custom_employee_details, null);
-
+//assigning custom layout Ids
                 holder.COL1 = (TextView) view.findViewById(R.id.Employeeid);
                 holder.COL2 = (TextView) view.findViewById(R.id.EmployeeName);
                 holder.COL3 = (TextView) view.findViewById(R.id.Employeecontact);
@@ -127,13 +127,13 @@ public class ManageEmployeee extends AppCompatActivity {
 
                 holder = (ViewHolder) view.getTag();
             }
-
+//collecting data from the database and displaying in the view
             holder.COL1.setText("Code:- "+user.get(position).getId());
             holder.COL2.setText("Name:- "+user.get(position).getName());
             holder.COL3.setText("Contact:- "+user.get(position).getContact());
             holder.COL4.setText("Position:- "+user.get(position).getPosition());
             System.out.println(holder);
-
+//delete employee details
             holder.button2.setOnClickListener(new View.OnClickListener() { //delete employee button
                 @Override
                 public void onClick(View v) {
@@ -143,7 +143,7 @@ public class ManageEmployeee extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    final String idd = user.get(position).getId();
+                                    final String idd = user.get(position).getId();//getting id to delete the employee
                                     FirebaseDatabase.getInstance().getReference("EmployeeDetails").child(idd).removeValue(); //remove all data from table under given ID
                                     //remove function not written
                                     Toast.makeText(myContext, "Employee deleted successfully", Toast.LENGTH_SHORT).show(); //display delete success toast message
@@ -160,12 +160,12 @@ public class ManageEmployeee extends AppCompatActivity {
                             .show();
                 }
             });
-
+//update employee details
             holder.button1.setOnClickListener(new View.OnClickListener() { //update employee button
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                    View view1 = inflater.inflate(R.layout.custom_update_employee_details, null);
+                    View view1 = inflater.inflate(R.layout.custom_update_employee_details, null);//redirect to the update form
                     dialogBuilder.setView(view1);
                     //assign IDs to the new update variables
                     final EditText editText1 = (EditText) view1.findViewById(R.id.upEid);
@@ -180,11 +180,11 @@ public class ManageEmployeee extends AppCompatActivity {
                     alertDialog.show();
 
                     final String idd = user.get(position).getId(); //check ID in firebase
-                    final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("EmployeeDetails").child(idd);//retrieve firebase values
-                    reference.addValueEventListener(new ValueEventListener() {
+                    final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("EmployeeDetails").child(idd);//checking for thr relevant ID in the table
+                    reference.addValueEventListener(new ValueEventListener() { //retrieve data from the firebase to the relevant Id
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            //get values from table
+                            //get values from already existing table
                             String id = (String) snapshot.child("id").getValue();
                             String name = (String) snapshot.child("name").getValue();
                             String contact = (String) snapshot.child("contact").getValue();
@@ -226,6 +226,8 @@ public class ManageEmployeee extends AppCompatActivity {
                                 editText2.setError("Employee Name is required");
                             }else if (contact.isEmpty()) {
                                 editText3.setError("Employee Contact Number is required");
+                            }else if(contact.length() > 10){
+                                editText3.setError("Enter correct number number is required");
                             }else if (nic.isEmpty()) {
                                 editText4.setError("Employee nic is required");
                             } else if (address.isEmpty()) {

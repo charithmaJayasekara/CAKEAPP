@@ -59,6 +59,8 @@ public class AddEmployee extends AppCompatActivity {
                     editText2.setError("Employee Name is required");
                 }else if (contact.isEmpty()) {
                     editText3.setError("Employee Contact Number is required");
+                }else if(contact.length() > 10){
+                        editText3.setError("Enter correct number number is required");
                 }else if (nic.isEmpty()) {
                     editText4.setError("Employee nic is required");
                 } else if (address.isEmpty()) {
